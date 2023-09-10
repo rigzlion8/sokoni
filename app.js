@@ -15,6 +15,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: 'EybtbYWy0XT8oof567Qhb53ZEAAUhxz9', resave: false, saveUninitialized: true }));
 app.use(flash());
 
+
+// register route
+ app.get('/register', (req, res) => {
+     res.render('register', { message: 'Redirecting...Please wait' });
+});
+
+
 // Signup route
 app.get('/signup', (req, res) => {
    res.render('signup', { message: req.flash('signupMessage') });
