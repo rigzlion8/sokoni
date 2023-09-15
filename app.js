@@ -34,7 +34,7 @@ app.post('/signup', (req, res) => {
 
 	//Check if passwords match
    if (password !== confirmPassword) {
-       req.flash('signupMessage', 'Passwords do not match');
+       req.flash('signupMessage', 'Passwords do not match. Try again');
        return res.redirect('/signup');
        }
 
@@ -64,14 +64,14 @@ app.post('/signup', (req, res) => {
              req.flash('signupMessage', 'Username or email already exists');
          } else {
              req.flash('signupMessage', 'User registration failed');
-                                                                                                                                 }
-                                                                                                                                    res.redirect('/signup');
-                                                                                                                                 } else {
-                                                                                                                                    req.flash('loginMessage', 'Registration successful. Please log in.');
-                                                                                                                                    res.redirect('/login');
-                                                                                                                                  }
-                                                                                                                                });
-                                                                                                                             });
+            }
+             res.redirect('/signup');
+         } else {
+             req.flash('loginMessage', 'Registration successful. Please log in.');
+             res.redirect('/login');
+            }
+       });
+    });
  });
 //});
 
@@ -113,6 +113,11 @@ app.post('/login', (req, res) => {
 });
 
 
+// home route
+app.get('/home', (req, res) => {
+       res.render('home', { message: 'Redirecting...Please wait' });
+});
+
 // dashboard route
 app.get('/dashboard', (req, res) => {
      // Check if the user is authenticated (e.g., by checking session or JWT)
@@ -124,8 +129,23 @@ app.get('/dashboard', (req, res) => {
 	const user = req.session.user;
 
             // Render the dashboard view
-                res.render('dashboard', { user }); // Replace 'dashboard' with your actual view name
-        });
+                res.render('dashboard', { user });
+});
+
+// cart route
+app.get('/cart', (req, res) => {
+      // Check if the user is authenticated (e.g., by checking session or JWT)
+      //         if (!req.isAuthenticated()) {
+         if (!req.session || !req.session.user) {
+              // Redirect unauthenticated users to the login page
+            return res.redirect('/login');
+          }
+         const user = req.session.user;
+
+	// Render the dashboard view
+
+	res.render('cart', { user });
+});
 
 
 const port = process.env.PORT || 5000;

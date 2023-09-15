@@ -1,7 +1,8 @@
 /* Add your CSS styles for the signup form here */
 body {
     font-family: Arial, sans-serif;
-    background-image: url('../images/header.jpg'); no-repeat center;
+    background-image: url('../images/header.jpg'); 
+    background-repeat: no-repeat center;
     background-size: cover;
     margin: 0;
     padding: 0;

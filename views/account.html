@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-Code | Account</title>
+    <link rel="icon" href="images/g.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap" 
+    rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css">
+</head>
+       <body>
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <a href="index.html"><img src="images/logo.png" alt="" width="160px"></a>
+                    </div>
+                    <nav>
+                        <ul id="menuItems">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="index.html">Products</a></li>
+                            <li><a href="index.html">Wishlist</a></li>
+                            <li><a href="index.html">Checkout</a></li>
+			                <li><a href="index.html">Contact Us</a></li>
+                            <li><a href="index.html">About</a></li>
+                        </ul>
+                    </nav>
+                    <a href="cart.html"></a><img src="images/cart.png" width="30px" height="30px">
+                    <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
+                </div>
+            </div>
+
+<!-----------------------Account----------------->
+<div class="account-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-2">
+                <img src="images/image1.png" width="100%">
+            </div>
+
+            <div class="col-2">
+                <div class="form-container">
+                    <div class="form-btn">
+                        <span onclick="login()">Login</span>
+                        <span onclick="signup()">Sign Up</span>
+                        <hr id="indicator">
+                    </div>
+
+                    <form id="loginForm">                        
+                        <input type="text" placeholder="username">
+                        <input type="password" placeholder="password">
+                        <button type="submit" class="btn">Login</button>
+                        <a href="">Forgot Password?</a>
+                    </form>
+
+                    <form id="signupForm">
+                        <input type="text" placeholder="username">                        
+                        <input type="email" placeholder="email">                        
+                        <input type="password" placeholder="password">
+                        <button type="submit" class="btn">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!--------------------footer----------------------->                            
+      
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="footer-col-1">
+                        <h3>App coming soon...</h3>
+                        <p>Android and Iphone app coming soon</p>
+                        <div class="app-logo">
+                            <img src="images/play-store.png">
+                            <img src="images/app-store.png">
+                        </div>
+                    </div>
+                    <div class="footer-col-2">
+                        <img src="images/logo-white.png">
+                        <p>Get notifications when we launch</p>
+                    </div>
+                    <div class="footer-col-3">
+                        <h3>Useful Links</h3>
+                        <ul>
+                            <li>Refer a friend</li>
+                            <li>Blog Post</li>
+                            <li>Return Policy</li>
+                            <li>Join Loyalty program</li>
+                        </ul>
+                    </div>
+                    <div class="footer-col-4">
+                        <h3>Follow us on our socials</h3>
+                        <ul>
+                            <li>Facebook</li>
+                            <li>Twitter</li>
+                            <li>Instagram</li>
+                            <li>YouTube</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr>
+                <p class="copyright">Copyright 2023 - Powered by rigzLion8</p>
+
+<!---------------js for menu toggle--------------->
+
+<script>
+    var menuItems = document.getElementById("menuItems");
+
+    menuItems.style.maxHeight = "0px";
+
+    function menutoggle() {
+        if (menuItems.style.maxHeight == "0px")
+        {
+            menuItems.style.maxHeight == "200px";
+        }
+        else 
+        {
+            menuItems.style.maxHeight = "0px";
+        }
+    }
+</script>
+
+<!--------------------Js for toggleform-------------------->
+
+<script>
+    
+    var loginForm = document.getElementById("loginForm");
+
+    var signupForm = document.getElementById("signupForm");
+
+    var indicator = document.getElementById("indicator");
+
+        function signup() {
+            
+            signupForm.style.transform = "translateX(0px)";
+            loginForm.style.transform = "translateX(0px)";
+            indicator.style.transform = "translateX(100px)";
+        }
+        function login() {
+            
+            signupForm.style.transform = "translateX(300px)";
+            loginForm.style.transform = "translateX(300px)";
+            indicator.style.transform = "translateX(0px)";
+        }
+
+    </script>
+
+    <script>
+        
+        function setFormMessage(formElement, type, message) {
+
+            const messageElement = formElement.querySelector(".form__message");
+
+            messageElement.textContent = message;
+            messageElement.classList.remove("form__message-success", "form__message-error");
+            messageElement.classList.add('form_message--$(type)');
+        }
+
+        setFormMessage(loginForm, "success", "you are logged in!");
+
+        </script>
+
+
+</body>
+</html>
