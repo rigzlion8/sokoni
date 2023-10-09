@@ -4,7 +4,9 @@ body {
     background-color: #f5f5f5;
     margin: 0;
     padding: 0;
-    background-image: url('../images/imgs/header.jpg'); no-repeat center;
+    background-image: url('../images/naiirobi.jpg'); no-repeat center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 header {
     background-color: #333;

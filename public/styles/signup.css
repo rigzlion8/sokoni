@@ -1,27 +1,37 @@
 /* Add your CSS styles for the signup form here */
 body {
     font-family: Arial, sans-serif;
-    background-image: url('../images/header.jpg'); 
-    background-repeat: no-repeat center;
+    background-image: url('../images/naiirobi.jpg'); no-repeat center;
+    background-repeat: no-repeat;
     background-size: cover;
     margin: 0;
     padding: 0;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
+    min-height: 100vh;
 }
 header {
-    background: #F7882F;
+    background-color: coral;
     color: #fff;
     text-align: center;
-    padding: 5px 0;
+    padding: 5px;
+    
+
+}
+.header h1{
+    padding: 10px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-left: 0;
+    background-color: coral;
+    justify-content: center;
+    color: white;
+    display: flex;
 }
 
 .signup-container {
     max-width: 300px;
-    margin: 20px auto;
-    background-color: #ff8928;
-    padding: 20px;
+    margin: 18px auto;
+    background-color: coral;
+    padding: 13px;
     border-radius: 12px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
@@ -38,21 +48,20 @@ header {
 .signup-form input[type="password"],
 .signup-form input[type="email"],
 .signup-form input[type="number"] {
-    width: 90%;
-    padding: 10px;
+    width: 94%;
+    padding: 7px;
     border: 1px solid #ccc;
     border-radius: 6px;
     }
-.signup-button {
-    background-color: #333;
+.signup-button{
+    display: inline-block;
+    background: #ff523b;
     color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
+    padding: 8px 30px;
+    margin: 30px 0;
+    border-radius: 30px;
+    transition: background 0.5s;
 }
 .signup-button:hover {
-    background-color: #555;
+    background: #563434;
 }
-

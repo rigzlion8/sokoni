@@ -10,10 +10,10 @@ body{
 a{color:inherit;text-decoration:none}
 
 .login-wrap{
-	width:100%;
-	margin:auto;
-	max-width:525px;
-	min-height:670px;
+	width: 85%;
+	margin: auto;
+	max-width:400px;
+        min-height:670px;
 	position:relative;
 	background:url(https://raw.githubusercontent.com/khadkamhn/day-01-login-form/master/img/bg.jpg) no-repeat center;
 	box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
@@ -21,7 +21,7 @@ a{color:inherit;text-decoration:none}
 .login-html{
 	width:100%;
 	height:100%;
-	position:absolute;
+	position: relative;
 	padding:90px 70px 50px 70px;
 	background:rgba(40,57,101,.9);
 }
@@ -31,7 +31,7 @@ a{color:inherit;text-decoration:none}
 	left:0;
 	right:0;
 	bottom:0;
-	position:absolute;
+	position: relative;
 	transform:rotateY(180deg);
 	backface-visibility:hidden;
 	transition:all .4s linear;

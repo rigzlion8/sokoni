@@ -1,6 +1,7 @@
 let ShoppingCart = document.getElementById("shopping-cart");
 let label = document.getElementById("label");
 
+
 /**
  * ! Basket to hold all the selected items
  * ? the getItem part is retrieving data from the local storage
@@ -157,10 +158,11 @@ let TotalAmount = () => {
 
     return (label.innerHTML = `
     <h2>Total Bill : $ ${amount}</h2>
-    <button class="checkout">Checkout</button>
+    <button onclick="location.href='https://sokoni.innovatenbo.tech/checkout'" class="checkout">Checkout</button>
     <button onclick="clearCart()" class="removeAll">Clear Cart</button>
     `);
   } else return;
+	const bill = amount;
 };
 
 TotalAmount();

@@ -4,6 +4,19 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('express-flash');
 const dotenv = require('dotenv').config();
+const path = require('path');
+const passport = require('passport');
+
+const PUBLISHABLE_KEY = process.env.PUBLISHABLE_KEY;
+const SECRET_KEY = process.env.SECRET_KEY;
+
+const TWITTER_CONSUMER_KEY = process.env.TWITTER_CONSUMER_KEY;
+const TWITTER_CONSUMER_SECRET = process.env.TWITTER_CONSUMER_SECRET;
+
+const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
+const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
+
+const stripe = require('stripe')(SECRET_KEY);
 
 const app = express();
 
@@ -14,6 +27,14 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: 'EybtbYWy0XT8oof567Qhb53ZEAAUhxz9', resave: false, saveUninitialized: true }));
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('./auth');
+
+function isLoggedIn(req, res, next) {
+  req.user ? next() : res.sendStatus(401);
+}
 
 
 // register route
@@ -128,8 +149,9 @@ app.get('/dashboard', (req, res) => {
         }
 	const user = req.session.user;
 
-            // Render the dashboard view
-                res.render('dashboard', { user });
+        // Render the dashboard view
+        res.render('dashboard', { user });
+		//res.send(`Hello ${req.user.displayName}`);
 });
 
 // cart route
@@ -147,8 +169,101 @@ app.get('/cart', (req, res) => {
 	res.render('cart', { user });
 });
 
+// payment page
+app.get('/checkout', (request, response) => {
+    response.render('payment', {
+        key:PUBLISHABLE_KEY
+    })
+});
+
+
+// payment route
+app.post('/payment', (request, response) => {
+    stripe.customers.create({
+        email:request.body.stripeEmail,
+        source:request.body.stripeToken,
+        name: 'Rigz Lion',
+        address: {
+            line1: 'Kariuki Drive off Limuru road',
+            postal_code: '00100',
+            city: 'Nairobi',
+            state: 'Nairobi',
+            country: 'Kenya'
+        }
+    })
+    .then((customer) => {
+        return stripe.charges.create({
+            amount:7000,
+            description: 'Web development 101',
+            currency: 'USD',
+            customer: customer.id
+        })
+    })
+    .then((charge) => {
+        console.log(charge)
+        response.send('Success! Payment received.')
+    })
+    .catch((err) => {
+        response.send(err)
+    })
+});
+
+
+// Authenticate with google
+app.get('/auth/google', 
+  passport.authenticate('google', { scope: ['email', 'profile'] })
+);
+
+app.get('/google/callback', 
+  passport.authenticate('google', { successRedirect: '/protected', 
+  failureRedirect: '/auth/failure',
+ })
+);
+
+app.get('/auth/failure', (req, res) => {
+    res.send('Oops! something went wrong...');
+})
+
+//Protected page unless authenticated
+app.get('/protected', isLoggedIn, (req, res) => {
+    res.send(`Hello ${req.user.displayName}`);
+});
+
+app.get('/logout', (req, res) => {
+    req.logout();
+    req.session.destroy();
+    res.send('Goodbye!');
+});
+
+// Authenticate with Twitter
+app.get('/auth/twitter',
+  passport.authenticate('twitter'));
+
+app.get('/twitter/callback', 
+  passport.authenticate('twitter', { successRedirect: '/home', 
+	  failureRedirect: '/login',
+  })
+  //function(req, res) {
+  //// Successful authentication, redirect home.
+  //   res.redirect('/protected');
+);
+
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
 	  console.log(`Server up and running on port ${port}`);
 });
+
+
+//Authenticate via facebook
+app.get('/auth/facebook',
+	  passport.authenticate('facebook'));
+
+app.get('/facebook/callback',
+	  passport.authenticate('facebook', { successRedirect: '/home', 
+		  failureRedirect: '/login'
+	  })
+	//  function(req, res) {
+		      // Successful authentication, redirect home.
+		  //     res.redirect('/');
+);

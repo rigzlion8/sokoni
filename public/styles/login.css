@@ -3,26 +3,40 @@ body {
     background-color: #f5f5f5;
     margin: 0;
     padding: 0;
-    background-image: url('../images/header.jpg'); no-repeat center;
+    background-image: url('../images/naiirobi.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
 }
 
 header {
-    background-color: #F7882F;
+    background-color: coral;
     color: #fff;
     text-align: center;
     padding: 10px 0;
 }
+.header h1{
+    padding: 10px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-left: 0;
+    background-color: coral;
+    justify-content: center;
+    color: white;
+    display: flex;
+}
+
 
 .login-container {
     max-width: 300px;
-    margin: 20px auto;
-    background-color: #ff8928;
+    margin: 10px auto;
+    background-color: coral;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
 .login-form .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 11px;
     }
 .login-form label {
     display: block;
@@ -31,21 +45,21 @@ header {
 
 .login-form input[type="text"],
 .login-form input[type="password"] {
-    width: 85%;
-    padding: 10px;
+    width: 94%;
+    padding: 5px;
     border: 1px solid #ccc;
     border-radius: 6px;
 }
 
-.login-button {
-    background-color: #333;
+.login-button{
+    display: inline-block;
+    background: #ff523b;
     color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-weight: bold;
+    padding: 8px 27px;
+    margin: 10px 0;
+    border-radius: 20px;
+    transition: background 0.5s;
 }
 .login-button:hover {
-    background-color: #555;
+    background: #563434;
 }
