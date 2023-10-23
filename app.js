@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const mysql2 = require('mysql2');
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -6,6 +7,38 @@ const flash = require('express-flash');
 const dotenv = require('dotenv').config();
 const path = require('path');
 const passport = require('passport');
+const sequelize = require('./config');
+const User = require('./models/user');
+const multer = require('multer');
+const crypto = require('crypto');
+const sharp = require('sharp');
+
+const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+//function to rename image files before upload
+const randomImageName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
+
+const bucketName = process.env.BUCKET_NAME
+const bucketRegion = process.env.BUCKET_REGION
+const accessKey = process.env.ACCESS_KEY
+const secretAccessKeyId = process.env.SECRET_ACCESS_KEY
+
+const s3 = new S3Client({
+    credentials: {
+        accessKeyId: accessKey,
+        secretAccessKey: secretAccessKeyId,
+    },
+    region: bucketRegion
+});
+
+upload.single('image')
+
+//const { getUser, getUsers, createUser } = require('./db');
+const { getProduct, getProducts, createProduct } = require('./public/js/product');
 
 const PUBLISHABLE_KEY = process.env.PUBLISHABLE_KEY;
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -21,6 +54,7 @@ const stripe = require('stripe')(SECRET_KEY);
 const app = express();
 
 const db = require('./db');
+const Product = require('./public/js/product');
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -32,10 +66,146 @@ app.use(passport.session());
 
 require('./auth');
 
+sequelize.sync()
+  .then(() => { 
+    console.log('Database and tables synced.');
+  })
+  .catch(() => { 
+    console.error('Error syncing database:', error);
+});
+
 function isLoggedIn(req, res, next) {
   req.user ? next() : res.sendStatus(401);
 }
 
+//admin page route
+app.get('/', (req, res) => {
+  res.render('pages/admin')
+});
+
+// create product route to create with image
+app.get('/create', (req, res) => {
+  res.render('pages/createProduct')
+});
+
+// create product route with image
+app.post('/create', upload.single('image'), createProduct, async (req, res) => {
+    const  { name, description, price, code, quantity } = req.body;
+    
+    console.log('req.body', req.body)
+    console.log('req.file', req.file)
+    
+    //resize image using sharp
+    const buffer = await sharp(req.file.buffer).resize({height: 600, width: 600, fit: 'contain' }).toBuffer()
+	    
+    const imageName = randomImageName()
+
+    const uploadParams = {
+        Bucket: bucketName, 
+        Key: imageName, // random image name generated before pushing to s3
+        Body: buffer, 
+        ContentType: req.file.mimetype,        
+    }
+	    
+    const command = new PutObjectCommand(uploadParams) 
+    console.log(req.body);
+    console.log(command);
+	    
+    await s3.send(command) 
+
+    const push = await createProduct(req.body.name, req.body.description, req.body.price, imageName, req.body.code, req.body.quantity )
+
+    console.log(push);
+	    
+    res.redirect('admin')
+    //res.send({ message: 'Success' });
+});
+
+// get products route
+app.get('/products', async (req, res) => {
+    const products = await getProducts()
+
+//    for (const product of products) {
+//   const getObjectParams = {
+//        Bucket: bucketName, 
+//        Key: product.imageUrl,
+//   }
+//    console.log(product);
+//
+	        
+//    const command = new GetObjectCommand(getObjectParams);
+//    const url = await getSignedUrl(s3, command, {expiresIn: 604800 });
+//    product.imageUrl = url
+//    }
+    res.send(products)
+});
+
+
+// Authenticate with google
+app.get('/auth/google',
+ // passport.authenticate('google', { scope: ['email', 'profile', 'displayName'] })
+  passport.authenticate('google', { scope: ['email', 'profile'] })
+);
+
+app.get('/google/callback',
+  passport.authenticate('google', { successRedirect: '/dashboard',
+       failureRedirect: '/login',
+  }),
+  async (req, res) => {
+      try {
+           console.log('Callback route entered');
+      if (!req.session || !req.session.user || !req.user) {
+        // Handle the case where user data is not available.
+        return res.redirect('/login');
+    }
+
+      const googleUser = req.session.user;
+      //  const googleUser = req.user;
+     // const { googleId: oAuthUserId, displayName: name, email } = googleUser;
+      const { googleId: oAuthUserId, email } = googleUser;
+//          console.log(googleUser);
+
+      let user = await User.findOne({ email });
+
+      if (!user) {
+         user = new User({
+            oAuthUserId,
+     //     name,
+            email,
+            oAuthProvider,
+         });
+
+      await user.save();
+  //          console.log(user);
+         }
+      req.login(user, (err) => {
+            if (err) {
+               console.error(err);
+            return res.redirect('/login');
+         }
+            return res.redirect('/dashboard');
+      });
+         }   catch (error) {
+               console.error(error);
+            return res.redirect('login');
+         }
+                                                                                                                                                                               }
+);
+
+app.get('/auth/failure', (req, res) => {
+   res.send('Oops! something went wrong...');
+})
+
+//Protected page unless authenticated
+app.get('/protected', isLoggedIn, (req, res) => {
+   res.send(`Hello ${req.user.displayName}`);
+});
+
+app.get('/logout', (req, res) => {
+   req.logout();
+   req.session.destroy();
+   res.send('Goodbye!');
+});
 
 // register route
  app.get('/register', (req, res) => {
@@ -76,7 +246,8 @@ app.post('/signup', (req, res) => {
 //	        if (err) throw err;
 
 	        db.query('CREATE DATABASE IF NOT EXISTS identity;');
-	        db.query('USE identity;');// Insert newUser into the database
+	        db.query('USE identity;');
+	   // Insert newUser into the database
    db.query('INSERT INTO users SET ?', newUser, (err, result) => {
          if (err) {
 
@@ -136,7 +307,7 @@ app.post('/login', (req, res) => {
 
 // home route
 app.get('/home', (req, res) => {
-       res.render('home', { message: 'Redirecting...Please wait' });
+       res.render('home');
 });
 
 // dashboard route
@@ -209,35 +380,12 @@ app.post('/payment', (request, response) => {
 });
 
 
-// Authenticate with google
-app.get('/auth/google', 
-  passport.authenticate('google', { scope: ['email', 'profile'] })
-);
 
-app.get('/google/callback', 
-  passport.authenticate('google', { successRedirect: '/protected', 
-  failureRedirect: '/auth/failure',
- })
-);
-
-app.get('/auth/failure', (req, res) => {
-    res.send('Oops! something went wrong...');
-})
-
-//Protected page unless authenticated
-app.get('/protected', isLoggedIn, (req, res) => {
-    res.send(`Hello ${req.user.displayName}`);
-});
-
-app.get('/logout', (req, res) => {
-    req.logout();
-    req.session.destroy();
-    res.send('Goodbye!');
-});
 
 // Authenticate with Twitter
 app.get('/auth/twitter',
   passport.authenticate('twitter'));
+
 
 app.get('/twitter/callback', 
   passport.authenticate('twitter', { successRedirect: '/home', 

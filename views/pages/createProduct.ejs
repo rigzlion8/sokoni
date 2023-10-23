@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header>
+  <%- include('../partials/header'); %>
+</header>
+
+<main>
+<div class="row">
+  <div class="col-sm-8">
+    <div class="jumbotron">
+        <form class="row g-3" action="/create" method="POST" enctype="multipart/form-data">
+          
+            <div class="col-md-6">
+              <label for="inputName" class="form-label">Name</label>
+              <input type="text" class="form-control" name="name" id="name" placeholder="product name" required>
+            </div>
+            <div class="col-md-6">
+              <label for="inputDescription" class="form-label">Description</label>
+              <input type="text" class="form-control" name="description" id="description" placeholder="describe the product" required>
+            </div>
+            <div class="col-md-6">
+            <label for="inputPrice" class="form-label">Price</label>
+            <input type="text" class="form-control" name="price" id="price" placeholder="how much" required>
+          </div>
+          <div class="col-md-6">
+          <label for="inputQuantity" class="form-label">Quantity</label>
+          <input type="text" class="form-control" name="quantity" id="quantity" placeholder="how many" required>
+        </div>            
+            <div class="col-md-6">
+                <label for="inputCaption" class="form-label">Caption</label>
+                <input type="text" class="form-control" name="code" id="imageCap" placeholder="image caption" required>
+              </div>
+              <div class="col-md-6">
+                <label for="inputImage" class="form-label">Image</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+              </div>     
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+    </div>
+  </div>
+
+  <div class="col-sm-4">
+    <div class="well">
+      <h3>Coming Soon!</h3>
+    </div>
+  </div>
+</div>
+<script>app.js</script>
+</main>
+
+<footer>
+  <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>
+
