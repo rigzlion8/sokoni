@@ -37,13 +37,13 @@ const createOauthTwitter = async function(name, oAuthUserId, oAuthProvider, imag
 	    const result = await con.query(`INSERT IGNORE INTO users (name, oAuthUserId, oAuthProvider, imageurl)
 	        VALUES (?, ?, ?, ?)`, [name, oAuthUserId, oAuthProvider, imageurl]);
 	    const id = result.insertId;
-	    return getOauthUser(oAuthUserId);
+	    return createOauthTwitter(oAuthUserId);
 }
 
 const createOauthFb = async function(oAuthUserId, name, oAuthProvider){
 	            const result = await con.query(`INSERT IGNORE INTO users (oAuthUserId, name, oAuthProvider)
-                    VALUES (?, ?, ?)`, [oAuthUserId, name, oAuthProvider]);
+                    VALUES (?, ?, ?, ?)`, [oAuthUserId, name, oAuthProvider]);
                 const id = result.insertId;
-            return getOauthUser(oAuthUserId);
+            return createOauthFb(oAuthUserId);
 }
 module.exports = { con, getOauthUsers, getOauthUser, createOauthUser, createOauthTwitter, createOauthFb };

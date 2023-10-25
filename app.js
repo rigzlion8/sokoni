@@ -6,9 +6,11 @@ const session = require('express-session');
 const flash = require('express-flash');
 const dotenv = require('dotenv').config();
 const path = require('path');
-const passport = require('passport');
-const sequelize = require('./config');
-const User = require('./models/user');
+
+const { createOauthUser, getOauthUser, getOauthUsers, con } = require('./config');
+
+const { passport, GoogleStrategy, FacebookStrategy, TwitterStrategy } = require('./auth')
+
 const multer = require('multer');
 const crypto = require('crypto');
 const sharp = require('sharp');
@@ -66,16 +68,10 @@ app.use(passport.session());
 
 require('./auth');
 
-sequelize.sync()
-  .then(() => { 
-    console.log('Database and tables synced.');
-  })
-  .catch(() => { 
-    console.error('Error syncing database:', error);
-});
-
-function isLoggedIn(req, res, next) {
-  req.user ? next() : res.sendStatus(401);
+const isLoggedIn = function (req, res, next) {
+  const oAuthUser = req.session;
+  oAuthUser ? next() : res.sendStatus(401);
+  //user ? next() : res.redirect('/register');
 }
 
 //admin page route
@@ -143,58 +139,17 @@ app.get('/products', async (req, res) => {
 
 // Authenticate with google
 app.get('/auth/google',
- // passport.authenticate('google', { scope: ['email', 'profile', 'displayName'] })
   passport.authenticate('google', { scope: ['email', 'profile'] })
 );
 
 app.get('/google/callback',
   passport.authenticate('google', { successRedirect: '/dashboard',
-       failureRedirect: '/login',
-  }),
-  async (req, res) => {
-      try {
-           console.log('Callback route entered');
-      if (!req.session || !req.session.user || !req.user) {
-        // Handle the case where user data is not available.
-        return res.redirect('/login');
-    }
-
-      const googleUser = req.session.user;
-      //  const googleUser = req.user;
-     // const { googleId: oAuthUserId, displayName: name, email } = googleUser;
-      const { googleId: oAuthUserId, email } = googleUser;
-//          console.log(googleUser);
-
-      let user = await User.findOne({ email });
-
-      if (!user) {
-         user = new User({
-            oAuthUserId,
-     //     name,
-            email,
-            oAuthProvider,
-         });
-
-      await user.save();
-  //          console.log(user);
-         }
-      req.login(user, (err) => {
-            if (err) {
-               console.error(err);
-            return res.redirect('/login');
-         }
-            return res.redirect('/dashboard');
-      });
-         }   catch (error) {
-               console.error(error);
-            return res.redirect('login');
-         }
-                                                                                                                                                                               }
-);
+       failureRedirect: '/register',
+}));
 
 app.get('/auth/failure', (req, res) => {
    res.send('Oops! something went wrong...');
-})
+});
 
 //Protected page unless authenticated
 app.get('/protected', isLoggedIn, (req, res) => {
@@ -311,25 +266,23 @@ app.get('/home', (req, res) => {
 });
 
 // dashboard route
-app.get('/dashboard', (req, res) => {
-     // Check if the user is authenticated (e.g., by checking session or JWT)
-//         if (!req.isAuthenticated()) {
-	if (!req.session || !req.session.user) {
-             // Redirect unauthenticated users to the login page
-         return res.redirect('/login');
-        }
-	const user = req.session.user;
+app.get('/dashboard', isLoggedIn, (req, res) => {
 
-        // Render the dashboard view
-        res.render('dashboard', { user });
-		//res.send(`Hello ${req.user.displayName}`);
+	if (!req.session) {
+        // Redirect unauthenticated users to the login page
+        return res.redirect('/login');
+        }
+	
+	// Render the dashboard view
+        res.render('dashboard');
+	//res.send(`Hello ${req.user.displayName}`);
 });
 
 // cart route
-app.get('/cart', (req, res) => {
+app.get('/cart', isLoggedIn, (req, res) => {
       // Check if the user is authenticated (e.g., by checking session or JWT)
       //         if (!req.isAuthenticated()) {
-         if (!req.session || !req.session.user) {
+         if (!req.session) {
               // Redirect unauthenticated users to the login page
             return res.redirect('/login');
           }
@@ -337,7 +290,7 @@ app.get('/cart', (req, res) => {
 
 	// Render the dashboard view
 
-	res.render('cart', { user });
+	res.render('cart');
 });
 
 // payment page
@@ -388,8 +341,8 @@ app.get('/auth/twitter',
 
 
 app.get('/twitter/callback', 
-  passport.authenticate('twitter', { successRedirect: '/home', 
-	  failureRedirect: '/login',
+  passport.authenticate('twitter', { successRedirect: '/dashboard', 
+	  failureRedirect: '/register',
   })
   //function(req, res) {
   //// Successful authentication, redirect home.
@@ -408,8 +361,8 @@ app.get('/auth/facebook',
 	  passport.authenticate('facebook'));
 
 app.get('/facebook/callback',
-	  passport.authenticate('facebook', { successRedirect: '/home', 
-		  failureRedirect: '/login'
+	  passport.authenticate('facebook', { successRedirect: '/dashboard', 
+		  failureRedirect: '/register'
 	  })
 	//  function(req, res) {
 		      // Successful authentication, redirect home.
