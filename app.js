@@ -156,15 +156,17 @@ app.get('/protected', isLoggedIn, (req, res) => {
    res.send(`Hello ${req.user.displayName}`);
 });
 
-app.get('/logout', (req, res) => {
-   req.logout();
-   req.session.destroy();
-   res.send('Goodbye!');
+app.get('/logout', function(req, res, next) {
+   req.logout(function(err) {
+     if (err) { return next(err); }
+     req.session.destroy();
+     res.redirect('/login');
+   });
 });
 
 // register route
  app.get('/register', (req, res) => {
-     res.render('register', { message: 'Redirecting...Please wait' });
+     res.render('register', { message: req.flash('loginMessage') });
 });
 
 
@@ -176,7 +178,9 @@ app.get('/signup', (req, res) => {
 const bcrypt = require('bcrypt');
 
 app.post('/signup', (req, res) => {
-  const { name, username, email, age, password, confirmPassword } = req.body;
+  const { name, username, email, dateOfBirth, password, confirmPassword } = req.body;
+
+	console.log(req.body);
 
 	//Check if passwords match
    if (password !== confirmPassword) {
@@ -193,7 +197,7 @@ app.post('/signup', (req, res) => {
               name,
               username,
               email,
-              age,
+              dateOfBirth,
               password: hashedPassword,
         };
 	   console.log(newUser);

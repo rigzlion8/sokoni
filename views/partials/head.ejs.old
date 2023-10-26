@@ -1,0 +1,27 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin</title>
+
+<!-- CSS (load bootstrap from a CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+
+  
+  .navbar {
+	background-color: coral;
+}
+  .p-5 {
+   	background-color: coral;
+	min-height: 100%;
+            margin-bottom: -60px;
+}
+  .container {
+	min-height: 100%;
+            margin-bottom: -60px;
+}
+
+  .footer {
+	height: 60px; /* Set the height of your footer here */
+            background-color: coral;
+}
+</style>
