@@ -113,7 +113,7 @@ app.post('/create', upload.single('image'), createProduct, async (req, res) => {
 
     console.log(push);
 	    
-    res.redirect('admin')
+    res.redirect('/')
     //res.send({ message: 'Success' });
 });
 
@@ -121,19 +121,19 @@ app.post('/create', upload.single('image'), createProduct, async (req, res) => {
 app.get('/products', async (req, res) => {
     const products = await getProducts()
 
-//    for (const product of products) {
-//   const getObjectParams = {
-//        Bucket: bucketName, 
-//        Key: product.imageUrl,
-//   }
-//    console.log(product);
-//
+    for (const product of products) {
+    const getObjectParams = {
+        Bucket: bucketName, 
+        Key: product.imageUrl,
+    }
+    //console.log(product);
+
 	        
-//    const command = new GetObjectCommand(getObjectParams);
-//    const url = await getSignedUrl(s3, command, {expiresIn: 604800 });
-//    product.imageUrl = url
-//    }
-    res.send(products)
+     const command = new GetObjectCommand(getObjectParams);
+     const url = await getSignedUrl(s3, command, {expiresIn: 604800 });
+     product.imageUrl = url
+     }
+     res.send(products)
 });
 
 
