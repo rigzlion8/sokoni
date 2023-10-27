@@ -40,7 +40,7 @@ const s3 = new S3Client({
 upload.single('image')
 
 //const { getUser, getUsers, createUser } = require('./db');
-const { getProduct, getProducts, createProduct } = require('./public/js/product');
+const { getProduct, getProducts, createProduct, getSignedProducts, getSigned } = require('./public/js/product');
 
 const PUBLISHABLE_KEY = process.env.PUBLISHABLE_KEY;
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -82,6 +82,11 @@ app.get('/', (req, res) => {
 // create product route to create with image
 app.get('/create', (req, res) => {
   res.render('pages/createProduct')
+});
+
+// test route
+app.get('/test', (req, res) => {
+  res.send({ message: 'This is a test page that you have accessed.'});
 });
 
 // create product route with image
@@ -134,6 +139,7 @@ app.get('/products', async (req, res) => {
      product.imageUrl = url
      }
      res.send(products)
+     //res.render('products', { shopItemsData: products });
 });
 
 

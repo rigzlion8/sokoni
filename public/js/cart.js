@@ -157,9 +157,11 @@ let TotalAmount = () => {
       .reduce((x, y) => x + y, 0);
 
     return (label.innerHTML = `
-    <h2>Total Bill : $ ${amount}</h2>
-    <button onclick="location.href='https://sokoni.innovatenbo.tech/checkout'" class="checkout">Checkout</button>
-    <button onclick="clearCart()" class="removeAll">Clear Cart</button>
+<!--    <div style="justify-content: center; padding-left: 50%; padding-right: 50%;"> -->
+    <div style="justify-content: center; padding-left: 40%"><h2>Total Bill : $ ${amount}</h2>
+    <button onclick="href=/checkout" class="checkout" style="justify-content: center;">Checkout</button>
+    <button onclick="clearCart()" class="removeAll" style="justify-content: center;">Clear Cart</button>
+    </div>
     `);
   } else return;
 	const bill = amount;

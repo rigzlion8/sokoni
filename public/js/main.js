@@ -1,5 +1,7 @@
 let shop = document.getElementById("shop");
 
+//const shopData = getSignedProducts;
+
 /**
  * ! Basket to hold all the selected items
  * ? the getItem part is retrieving data from the local storage
@@ -13,8 +15,7 @@ let basket = JSON.parse(localStorage.getItem("data")) || [];
  */
 
 let generateShop = () => {
-  return (shop.innerHTML = shopItemsData
-    .map((productx) => {
+  return (shop.innerHTML = shopItemsData.map((productx) => {
       let { id, name, desc, img, price } = productx;
       let search = basket.find((y) => y.id === id) || [];
       
