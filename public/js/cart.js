@@ -33,10 +33,10 @@ let generateCartItems = () => {
       .map((x) => {
         let { id, item } = x;
         let search = shopItemsData.find((x) => x.id === id) || [];
-        let { img, price, name } = search;
+        let { imageUrl, price, name } = search;
         return `
       <div class="cart-item">
-        <img width="100" src=${img} alt="" />
+        <img width="100" src=${imageUrl} alt="" />
 
         <div class="details">
         
@@ -67,7 +67,7 @@ let generateCartItems = () => {
     ShoppingCart.innerHTML = "";
     label.innerHTML = `
     <h2>Cart is Empty</h2>
-    <a href="https://sokoni.innovatenbo.tech/dashboard">
+    <a href="/dashboard">
       <button class="HomeBtn">Back to Home</button>
     </a>
     `;

@@ -1,6 +1,6 @@
 let shop = document.getElementById("shop");
 
-//const shopData = getSignedProducts;
+let shopItemsData = [];
 
 /**
  * ! Basket to hold all the selected items
@@ -14,25 +14,42 @@ let basket = JSON.parse(localStorage.getItem("data")) || [];
  * ! images, title, price, buttons, description
  */
 
+// Function to retreive signed product data from API
+let getSignedProducts = async function() {
+  try {
+    const response = await fetch('/api/products');
+    if (!response.ok) {
+      throw new Error('Unable to fetch product data');
+    }
+    const shopData = await response.json();
+    shopItemsData = shopData;
+
+    generateShop();
+  } catch (error) {
+    console.error(error);
+  }
+};
+getSignedProducts();
+
 let generateShop = () => {
-  return (shop.innerHTML = shopItemsData.map((productx) => {
-      let { id, name, desc, img, price } = productx;
+  return (shop.innerHTML = shopItemsData.map((x) => {
+      let { id, name, description, imageUrl, price } = x;
       let search = basket.find((y) => y.id === id) || [];
       
       return `
-    <div id=product-id-${productx.id} class="item">
-      <img width="220" src=${productx.img} alt="">
+    <div id=product-id-${x.id} class="item">
+      <img width="220" src=${x.imageUrl} alt="">
       <div class="details">
-        <h3>${productx.name}</h3>
-        <p>${productx.desc}</p>
+        <h3>${x.name}</h3>
+        <p>${x.description}</p>
         <div class="price-quantity">
-          <h2>$ ${productx.price} </h2>
+          <h2>$ ${x.price} </h2>
           <div class="buttons">
-            <i onclick="decrement(${productx.id})" class="bi bi-dash-lg"></i>
-            <div id=${productx.id} class="quantity">${
+            <i onclick="decrement(${x.id})" class="bi bi-dash-lg"></i>
+            <div id=${x.id} class="quantity">${
         search.item === undefined ? 0 : search.item
       }</div>
-            <i onclick="increment(${productx.id})" class="bi bi-plus-lg"></i>
+            <i onclick="increment(${x.id})" class="bi bi-plus-lg"></i>
           </div>
         </div>
       </div>

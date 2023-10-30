@@ -1,22 +1,25 @@
-const mysql = require('mysql');
-const mysql2 = require('mysql2');
-const express = require('express');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const flash = require('express-flash');
-const dotenv = require('dotenv').config();
-const path = require('path');
+import mysql from 'mysql'
+import mysql2 from 'mysql2'
+import express from 'express'
+import bodyParser from 'body-parser'
+import session from 'express-session'
+import flash from 'express-flash'
+import bcrypt from 'bcrypt'
+import dotenv from 'dotenv'
+dotenv.config()
+import path from 'path'
+import { loadStripe } from '@stripe/stripe-js';
 
-const { createOauthUser, getOauthUser, getOauthUsers, con } = require('./config');
+import { createOauthUser, getOauthUser, getOauthUsers, con } from './config.js'
 
-const { passport, GoogleStrategy, FacebookStrategy, TwitterStrategy } = require('./auth')
+import { passport, GoogleStrategy, FacebookStrategy, TwitterStrategy } from './auth.js'
 
-const multer = require('multer');
-const crypto = require('crypto');
-const sharp = require('sharp');
+import multer from 'multer'
+import crypto from 'crypto'
+import sharp from 'sharp'
 
-const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -39,8 +42,10 @@ const s3 = new S3Client({
 
 upload.single('image')
 
+export var getSigned;
+
 //const { getUser, getUsers, createUser } = require('./db');
-const { getProduct, getProducts, createProduct, getSignedProducts, getSigned } = require('./public/js/product');
+import { getProduct, getProducts, createProduct } from './public/js/product.js'
 
 const PUBLISHABLE_KEY = process.env.PUBLISHABLE_KEY;
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -51,12 +56,13 @@ const TWITTER_CONSUMER_SECRET = process.env.TWITTER_CONSUMER_SECRET;
 const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 
-const stripe = require('stripe')(SECRET_KEY);
+//const stripe = require('stripe')(SECRET_KEY);
+const stripe = await loadStripe(SECRET_KEY);
 
 const app = express();
 
-const db = require('./db');
-const Product = require('./public/js/product');
+import { db } from './db.js'
+//import Product from './public/js/product'
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -66,7 +72,7 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-require('./auth');
+//require('./auth.js');
 
 const isLoggedIn = function (req, res, next) {
   const oAuthUser = req.session;
@@ -86,7 +92,11 @@ app.get('/create', (req, res) => {
 
 // test route
 app.get('/test', (req, res) => {
-  res.send({ message: 'This is a test page that you have accessed.'});
+  //res.send({ message: 'This is a test page that you have accessed.'});
+	
+  //console.log();
+  res.send(getSigned);
+  
 });
 
 // create product route with image
@@ -123,7 +133,7 @@ app.post('/create', upload.single('image'), createProduct, async (req, res) => {
 });
 
 // get products route
-app.get('/products', async (req, res) => {
+app.get('/api/products', async (req, res) => {
     const products = await getProducts()
 
     for (const product of products) {
@@ -138,6 +148,8 @@ app.get('/products', async (req, res) => {
      const url = await getSignedUrl(s3, command, {expiresIn: 604800 });
      product.imageUrl = url
      }
+     getSigned = products;
+
      res.send(products)
      //res.render('products', { shopItemsData: products });
 });
@@ -180,8 +192,6 @@ app.get('/logout', function(req, res, next) {
 app.get('/signup', (req, res) => {
    res.render('signup', { message: req.flash('signupMessage') });
 });
-
-const bcrypt = require('bcrypt');
 
 app.post('/signup', (req, res) => {
   const { name, username, email, dateOfBirth, password, confirmPassword } = req.body;

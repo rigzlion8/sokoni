@@ -1,7 +1,8 @@
-const mysql = require('mysql');
-const dotenv = require('dotenv').config();
+import mysql from 'mysql'
+import dotenv from 'dotenv'
+dotenv.config()
 
-const db = mysql.createConnection({
+export const db = mysql.createConnection({
 	        host: process.env.HOST,
 	        user: process.env.USERNAME,
 	        password: process.env.PASSWORD
@@ -18,4 +19,3 @@ db.connect(function(err) {
 //	       db.end();
 });
 
-module.exports = db;

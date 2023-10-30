@@ -1,9 +1,10 @@
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth2').Strategy;
-const TwitterStrategy = require('passport-twitter').Strategy;
-const FacebookStrategy = require('passport-facebook').Strategy;
-const dotenv = require('dotenv').config();
-const { con, createOauthUser, createOauthTwitter, createOauthFb, getOauthUser, getOauthUsers } = require('./config');
+import passport from 'passport'
+import { Strategy as GoogleStrategy } from 'passport-google-oauth2'
+import { Strategy as TwitterStrategy } from 'passport-twitter'
+import { Strategy as FacebookStrategy } from 'passport-facebook'
+import dotenv from 'dotenv'
+dotenv.config()
+import  { con, createOauthUser, createOauthTwitter, createOauthFb, getOauthUser, getOauthUsers } from './config.js'
 
 // Google authentication
 passport.use(new GoogleStrategy({
@@ -13,7 +14,7 @@ passport.use(new GoogleStrategy({
 	  },
 
 function(accessToken, refreshToken, profile, done) {
-    userProfile=profile;
+    const userProfile=profile;
 
     const name = userProfile['displayName']
     const oAuthEmail = userProfile['emails'][0]['value']
@@ -45,7 +46,7 @@ passport.use(new TwitterStrategy({
 	  },
 	function(token, tokenSecret, profile, cb) {
 
-	userProfile=profile;
+	const userProfile=profile;
 			console.log(userProfile);
 		    const name = userProfile['displayName']
 		    const oAuthUserId = userProfile['id']
@@ -98,4 +99,5 @@ passport.deserializeUser(function(user, cb) {
                     cb(null , obj);  // _id is the only thing we need to store in session for now
 })
 
-module.exports = { passport, TwitterStrategy, FacebookStrategy, GoogleStrategy };
+export { passport, TwitterStrategy, FacebookStrategy, GoogleStrategy };
+
