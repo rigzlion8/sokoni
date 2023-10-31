@@ -8,7 +8,8 @@ import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
 dotenv.config()
 import path from 'path'
-import { loadStripe } from '@stripe/stripe-js';
+
+import Stripe from 'stripe'
 
 import { createOauthUser, getOauthUser, getOauthUsers, con } from './config.js'
 
@@ -56,13 +57,12 @@ const TWITTER_CONSUMER_SECRET = process.env.TWITTER_CONSUMER_SECRET;
 const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 
-//const stripe = require('stripe')(SECRET_KEY);
-const stripe = await loadStripe(SECRET_KEY);
+const stripe = new Stripe(SECRET_KEY);
+
 
 const app = express();
 
 import { db } from './db.js'
-//import Product from './public/js/product'
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -223,7 +223,7 @@ app.post('/signup', (req, res) => {
 	        db.query('CREATE DATABASE IF NOT EXISTS identity;');
 	        db.query('USE identity;');
 	   // Insert newUser into the database
-   db.query('INSERT INTO users SET ?', newUser, (err, result) => {
+   db.query('INSERT IGNORE INTO users SET ?', newUser, (err, result) => {
          if (err) {
 
 	// Handle duplicate username or other database errors
@@ -322,8 +322,8 @@ app.get('/checkout', (request, response) => {
 
 
 // payment route
-app.post('/payment', (request, response) => {
-    stripe.customers.create({
+app.post('/payment', async (request, response) => {
+    await stripe.customers.create({
         email:request.body.stripeEmail,
         source:request.body.stripeToken,
         name: 'Rigz Lion',
