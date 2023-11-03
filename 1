@@ -92,12 +92,10 @@ app.get('/create', (req, res) => {
 
 // test route
 app.get('/test', (req, res) => {
-  res.send({ message: 'This is a test page that you have accessed.'});
+  //res.send({ message: 'This is a test page that you have accessed.'});
 	
   //console.log();
-  //res.send(getSigned);
-  
-  //res.render('pages/test');
+  res.send(getSigned);
   
 });
 
@@ -157,12 +155,8 @@ app.get('/api/products', async (req, res) => {
 });
 
 // get product by id
-app.get('/api/products/:id', async(req, res) => {
-    
-    const id = req.params.id
-    const product = await getProduct(id)
-    console.log(product)
-    
+app.get('/api/product', async(req, res) => {
+    const product = await getProduct()
     
     const getObjectParams = {
         Bucket: bucketName,
@@ -211,21 +205,19 @@ app.get('/logout', function(req, res, next) {
 
 
 // Signup route
-app.get('/api/signup', (req, res) => {
-   res.render('pages/signup', { message: req.flash('signupMessage') });
+app.get('/signup', (req, res) => {
+   res.render('signup', { message: req.flash('signupMessage') });
 });
 
-app.post('/api/signup', (req, res) => {
-
- 
-  const { name, username, email, gender, idNumber, dateOfBirth, password, confirmPassword } = req.body;
+app.post('/signup', (req, res) => {
+  const { name, username, email, dateOfBirth, password, confirmPassword } = req.body;
 
 	console.log(req.body);
 
 	//Check if passwords match
    if (password !== confirmPassword) {
        req.flash('signupMessage', 'Passwords do not match. Try again');
-       return res.redirect('pages/signup');
+       return res.redirect('/signup');
        }
 
        // Hash the password
@@ -237,8 +229,6 @@ app.post('/api/signup', (req, res) => {
               name,
               username,
               email,
-	      gender, 
-	      idNumber, 
               dateOfBirth,
               password: hashedPassword,
         };
@@ -258,7 +248,7 @@ app.post('/api/signup', (req, res) => {
          } else {
              req.flash('signupMessage', 'User registration failed');
             }
-             res.redirect('pages/signup');
+             res.redirect('/signup');
          } else {
              req.flash('loginMessage', 'Registration successful. Please log in.');
              res.redirect('/login');

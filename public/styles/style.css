@@ -10,7 +10,9 @@
 
 body {
   font-family: sans-serif;
-  background-image: url('../images/naiirobi.jpg'); no-repeat center;
+  /*background-image: url('../images/nairobi.jpg'); no-repeat center;*/
+  /*background-color: #FFCD4B;*/
+  background-color: #f7f7f7;
   background-repeat: no-repeat;
   background-size: cover;
   min-height: 100vh;
@@ -35,6 +37,7 @@ a {
   flex-direction: row;
   justify-content: space-between;
   background-color: coral;
+  /*background-color: #023e8a;*/
   color: white;
   padding: 15px 60px;
   margin-bottom: 30px;
@@ -105,7 +108,10 @@ a {
   flex-direction: column;
   padding: 10px;
   gap: 10px;
-  background-color: coral;
+  /*background-color: coral;*/
+  /*background-color: #EBF2FA; */
+  background-color: #93C0A4;
+  height: 250px;
 }
 
 .price-quantity {

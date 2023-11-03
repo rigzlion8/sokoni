@@ -1,14 +1,35 @@
 let ShoppingCart = document.getElementById("shopping-cart");
 let label = document.getElementById("label");
 
+let shopItemsData = [];
 
-/**
+/*
  * ! Basket to hold all the selected items
  * ? the getItem part is retrieving data from the local storage
  * ? if local storage is blank, basket becomes an empty array
  */
 
 let basket = JSON.parse(localStorage.getItem("data")) || [];
+
+let getSignedProducts = async function() {
+  try {
+      const response = await fetch('/api/products');
+      if (!response.ok) {
+            throw new Error('Unable to fetch product data');
+          }
+      const shopData = await response.json();
+      shopItemsData = shopData;
+      
+      
+      generateCartItems();
+    } catch (error) {
+      console.error(error);
+  }
+};
+getSignedProducts();
+
+
+
 
 /**
  * ! To calculate total amount of selected Items
@@ -36,13 +57,13 @@ let generateCartItems = () => {
         let { imageUrl, price, name } = search;
         return `
       <div class="cart-item">
-        <img width="100" src=${imageUrl} alt="" />
+        <img width="100" src=${search.imageUrl} alt="" />
 
         <div class="details">
         
           <div class="title-price-x">
             <h4 class="title-price">
-              <p>${name}</p>
+              <p>${search.name}</p>
               <p class="cart-item-price">$ ${price}</p>
             </h4>
             <i onclick="removeItem(${id})" class="bi bi-x-lg"></i>
@@ -51,7 +72,7 @@ let generateCartItems = () => {
           <div class="cart-buttons">
             <div class="buttons">
               <i onclick="decrement(${id})" class="bi bi-dash-lg"></i>
-              <div id=${id} class="quantity">${item}</div>
+              <div id=${id} class="quantity">${x.item}</div>
               <i onclick="increment(${id})" class="bi bi-plus-lg"></i>
             </div>
           </div>
@@ -147,18 +168,22 @@ let removeItem = (id) => {
  */
 
 let TotalAmount = () => {
+  
   if (basket.length !== 0) {
-    let amount = basket
-      .map((x) => {
+    let amount = basket.map((x) => {
         let { id, item } = x;
-        let filterData = shopItemsData.find((x) => x.id === id);
-        return filterData.price * item;
+	    
+        let filterData = basket.find((x) => x.id === id);
+        
+	return filterData.price * item;
+
       })
       .reduce((x, y) => x + y, 0);
+	  
 
     return (label.innerHTML = `
 <!--    <div style="justify-content: center; padding-left: 50%; padding-right: 50%;"> -->
-    <div style="justify-content: center; padding-left: 40%"><h2>Total Bill : $ ${amount}</h2>
+    <div style="justify-content: center; padding-left: 40%;"><h2>Total Bill : $ ${amount}</h2>
     <button onclick="href=/checkout" class="checkout" style="justify-content: center;">Checkout</button>
     <button onclick="clearCart()" class="removeAll" style="justify-content: center;">Clear Cart</button>
     </div>

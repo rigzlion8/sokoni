@@ -1,52 +1,218 @@
-/* Basic dashboard styles */
+/**
+* ! Changing default styles of the browser
+**/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
-    background-image: url('../images/naiirobi.jpg'); no-repeat center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 0;
-}
-nav ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+  font-family: sans-serif;
+  /*background-image: url('../images/nairobi.jpg'); no-repeat center;*/
+  background-color: #FFCD4B;
+  /*background-color: #f8f8f8;*/
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+  background-repeat: no-repeat;
 }
 
-nav ul li {
-    display: inline;
-    margin-right: 10px;
+i {
+  cursor: pointer;
 }
 
-nav ul li a {
-    text-decoration: none;
-    color: #fff;
+a {
+  text-decoration: none;
+  color: white;
 }
 
-main {
-    max-width: 800px;
-    margin: 20px auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-}
-.user-profile h1 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-.order-history ul {
-    list-style-type: none;
-    padding: 0;
+/**
+* ! Navbar STyles are here
+**/
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: coral;
+  color: white;
+  padding: 15px 60px;
+  margin-bottom: 30px;
 }
 
-.order-history ul li {
-    margin-bottom: 10px;
+.cart {
+  position: relative;
+  background-color: #fff;
+  color: #212529;
+  font-size: 30px;
+  padding: 5px;
+  border-radius: 4px;
 }
 
+.cartAmount {
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  font-size: 16px;
+  background-color: red;
+  color: white;
+  padding: 3px;
+  border-radius: 3px;
+}
+
+/**
+* ! Shop items styles are here
+**/
+
+.shop {
+  display: grid;
+  grid-template-columns: repeat(4, 223px);
+  gap: 30px;
+  justify-content: center;
+  margin-bottom: 50px;
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+@media (max-width: 1000px) {
+  .shop {
+    grid-template-columns: repeat(2, 223px);
+  }
+}
+
+@media (max-width: 500px) {
+  .shop {
+    grid-template-columns: repeat(1, 223px);
+  }
+}
+
+.item {
+  border: 2px solid #212529;
+  border-radius: 4px;
+}
+.item img {
+  width: 100%;
+  border-radius: 2px 2px 0 0;
+}
+.item:hover { 
+  transform: translateY(-7px);
+  transition: all 300ms ease;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+  background-color: coral;
+}
+
+.price-quantity {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.bi-dash-lg {
+  color: red;
+}
+
+.bi-plus-lg {
+  color: green;
+}
+
+/**
+* ! style rules for label and some buttons
+**/
+
+.text-center {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.stripe-button {
+  justify-content: center;
+  padding-bottom: 20px;
+  text-align: center;
+
+}
+
+.HomeBtn,
+.checkout,
+.removeAll {
+  display: inline-block;
+  background: #ff523b;
+  color: #fff;
+  padding: 8px 30px;
+  margin: 30px 0;
+  border-radius: 5px;
+  transition: background 0.5s;
+}
+.HomeBtn:hover {
+  background: #563434;
+}
+
+.checkout {
+  background-color: green;
+}
+.removeAll {
+  background-color: red;
+}
+.bi-x-lg {
+  color: red;
+  font-weight: bold;
+}
+
+/**
+* ! style rules for shopping-cart
+**/
+
+.shopping-cart {
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: repeat(1, 320px);
+  justify-content: center;
+  gap: 15px;
+}
+
+/**
+* ! style rules for cart-item
+**/
+
+.cart-item {
+  border: 2px solid #212529;
+  border-radius: 5px;
+  display: flex;
+}
+
+.title-price-x {
+  width: 195px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* border: 2px solid red; */
+}
+
+.title-price {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-item-price {
+  background-color: #212529;
+  color: white;
+  border-radius: 4px;
+  padding: 3px 6px;
+}

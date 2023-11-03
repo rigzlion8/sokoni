@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+     <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+     <title>signup</title>
+     <link rel="stylesheet" href="/styles/style.css">
+     <link rel="icon" href="/images/g.png" type="image/x-icon">
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<style>
+
+  * {
+     box-sizing: border-box;
+     padding: 0;
+     margin: 0;
+  }
+  .navbar {
+     /*background-color: coral;*/
+     background-color: #427AA1;
+  }
+  .navbar-brand {
+     color: #81E979;
+  }
+  .nav-link {
+     color: #81E979;
+  }
+  .navbar-collapse {
+     justify-content: flex-end;
+  }
+  .p-5 {
+    /*background-color: coral;*/
+    background-color: #427AA1;
+    min-height: 100%;
+    margin-bottom: -60px;
+  </style>
+
+</head>
+<body class="p-3 m-0 border-0 bd-example m-0 border-0">
+
+<header>
+ <nav class="navbar navbar-expand-lg">
+   <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="/api/signup">Sokoni</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+      </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+     <ul class="navbar-nav">
+     <li class="nav-item">
+      <a class="nav-link fw-bold" href="/login">Login</a>
+      </li>     
+     </ul>
+     </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+<div class="row" style="justify-content: center">
+  <div class="col-sm-8 pt-3">
+    <div class="jumbotron p-4 mb-4" style="border-radius: 10px; border: 1px solid #e5e5e5; background-color: #B5BFA1;">
+        <form class="row g-3" action="/api/signup" method="POST">
+          
+            <div class="col-md-6">
+              <label for="inputName" class="form-label">Name</label>
+              <input type="text" class="form-control" name="name" id="name" placeholder="enter your full name" required>
+            </div>
+            <div class="col-md-6">
+              <label for="inputUsername" class="form-label">Username</label>
+              <input type="text" class="form-control" name="username" id="username" placeholder="enter your username" required>
+            </div>
+            <div class="col-md-6">
+            <label for="inputEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" id="email" placeholder="enter your email address" required>
+          </div>
+	  <div class="col-md-6">
+	  <label for="inputGender" class="form-label">Gender</label>
+	  <select class="form-select form-control" name="gender" id="gender" aria-label="Default select example">
+	    <option selected>select you gender here</option>
+	    <option value="Male">Male</option>
+	    <option value="Female">Female</option>
+	  </select>
+	  </div>
+          <div class="col-md-6">
+          <label for="inputPassword" class="form-label">Password</label>
+          <input type="password" class="form-control" name="password" id="password" placeholder="enter your password" required>
+        </div>            
+            <div class="col-md-6">
+                <label for="inputConfirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="confirm your password" required>
+              </div>
+              <div class="col-md-6">
+                <label for="inputId" class="form-label">ID Number</label>
+                <input type="text" class="form-control" id="idNumber" name="idNumber" placeholder="enter your id number" required>
+              </div>
+	      <div class="col-md-6">
+                <label for="dateOfBirth" class="form-label">Date of birth</label>
+              <div class="input-group date" id="datepicker">
+                <input type="date" class="form-control" id="date" name="dateOfBirth"/>
+		  <span class="input-group-append">
+			  <!-- span class="input-group-text bg-light d-block"> -->
+			  <!-- i class="bi bi-calendar3"></i> -->
+		  <!-- </span> -->
+                  </span>
+                 </div>
+               </div>
+            <div class="col-12 mb-3">
+              <button type="submit" class="btn btn-primary">Signup</button>
+            </div>
+          </form>
+    </div>
+  </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+ $(function(){
+  $('#datepicker').datepicker({
+     format: 'yyyy-mm-dd' });
+});
+</script>
+<script>app.js</script>
+</main>
+
+<footer>
+  <div class="p-5 text-center position-relative">
+  <p class="text-center text-black">&copy; Copyright 2024 Reagan Otieno. email: reagan.musav@gmail.com</p>
+</div>
+</footer>
+
+</body>
+</html>
+
