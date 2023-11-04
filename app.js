@@ -92,12 +92,12 @@ app.get('/create', (req, res) => {
 
 // test route
 app.get('/test', (req, res) => {
-  res.send({ message: 'This is a test page that you have accessed.'});
+  //res.send({ message: 'This is a test page that you have accessed.'});
 	
   //console.log();
   //res.send(getSigned);
   
-  //res.render('pages/test');
+  res.render('pages/test');
   
 });
 
@@ -211,7 +211,7 @@ app.get('/logout', function(req, res, next) {
 
 
 // Signup route
-app.get('/api/signup', (req, res) => {
+app.get('/signup', (req, res) => {
    res.render('pages/signup', { message: req.flash('signupMessage') });
 });
 
@@ -249,16 +249,16 @@ app.post('/api/signup', (req, res) => {
 	        db.query('CREATE DATABASE IF NOT EXISTS identity;');
 	        db.query('USE identity;');
 	   // Insert newUser into the database
-   db.query('INSERT IGNORE INTO users SET ?', newUser, (err, result) => {
+   db.query('INSERT INTO users SET ?', newUser, (err, result) => {
          if (err) {
 
 	// Handle duplicate username or other database errors
          if (err.code === 'ER_DUP_ENTRY') {
-             req.flash('signupMessage', 'Username or email already exists');
+             req.flash('signupMessage', 'Username or email already exists.');
          } else {
-             req.flash('signupMessage', 'User registration failed');
+             req.flash('signupMessage', 'User registration failed.');
             }
-             res.redirect('pages/signup');
+             res.redirect('/signup');
          } else {
              req.flash('loginMessage', 'Registration successful. Please log in.');
              res.redirect('/login');
@@ -320,7 +320,7 @@ app.get('/dashboard', isLoggedIn, (req, res) => {
         }
 	
 	// Render the dashboard view
-        res.render('dashboard');
+        res.render('pages/dashboard');
 	//res.send(`Hello ${req.user.displayName}`);
 });
 
@@ -371,7 +371,8 @@ app.post('/payment', async (request, response) => {
     })
     .then((charge) => {
         console.log(charge)
-        response.send('Success! Payment received.')
+        //response.send('Success! Payment received.')
+	response.redirect('/dashboard');
     })
     .catch((err) => {
         response.send(err)

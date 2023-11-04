@@ -45,7 +45,7 @@
 <header>
  <nav class="navbar navbar-expand-lg">
    <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="/api/signup">Sokoni</a>
+    <a class="navbar-brand fw-bold" href="/signup">Sokoni</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
       </button>
@@ -65,7 +65,9 @@
   <div class="col-sm-8 pt-3">
     <div class="jumbotron p-4 mb-4" style="border-radius: 10px; border: 1px solid #e5e5e5; background-color: #B5BFA1;">
         <form class="row g-3" action="/api/signup" method="POST">
-          
+		<% if (message) { %>
+		                  <p class="message"><%= message %></p>
+				                 <% } %>
             <div class="col-md-6">
               <label for="inputName" class="form-label">Name</label>
               <input type="text" class="form-control" name="name" id="name" placeholder="enter your full name" required>
@@ -109,6 +111,7 @@
                   </span>
                  </div>
                </div>
+	       
             <div class="col-12 mb-3">
               <button type="submit" class="btn btn-primary">Signup</button>
             </div>
