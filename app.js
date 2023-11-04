@@ -82,7 +82,7 @@ const isLoggedIn = function (req, res, next) {
 
 //admin page route
 app.get('/', (req, res) => {
-  res.render('pages/admin')
+  res.redirect('/login')
 });
 
 // create product route to create with image
@@ -92,12 +92,12 @@ app.get('/create', (req, res) => {
 
 // test route
 app.get('/test', (req, res) => {
-  //res.send({ message: 'This is a test page that you have accessed.'});
+  res.send({ message: 'This is a test page that you have accessed.'});
 	
   //console.log();
   //res.send(getSigned);
   
-  res.render('pages/test');
+  //res.render('pages/test');
   
 });
 
@@ -308,7 +308,7 @@ app.post('/login', (req, res) => {
 
 // home route
 app.get('/home', (req, res) => {
-       res.render('home');
+       res.render('pages/admin');
 });
 
 // dashboard route
@@ -336,7 +336,7 @@ app.get('/cart', isLoggedIn, (req, res) => {
 
 	// Render the dashboard view
 
-	res.render('cart');
+	res.render('pages/cart');
 });
 
 // payment page
