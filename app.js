@@ -8,6 +8,16 @@ import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
 dotenv.config()
 import path from 'path'
+import fs from 'fs'
+import { promises as fsPromises } from 'fs'
+import { logEvents } from './logEvents.js'
+import EventEmitter from 'events'
+
+// setup event emitter
+class MyEmitter extends EventEmitter {};
+//initialize object
+const myEmitter = new MyEmitter();
+myEmitter.on('log', (msg, fileName) => logEvents(msg, fileName))
 
 import Stripe from 'stripe'
 
@@ -82,27 +92,37 @@ const isLoggedIn = function (req, res, next) {
 
 //admin page route
 app.get('/', (req, res) => {
-  res.redirect('/login')
+  myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
+  res.render('pages/home')
 });
 
 // create product route to create with image
 app.get('/create', (req, res) => {
+  myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
   res.render('pages/createProduct')
 });
 
 // test route
 app.get('/test', (req, res) => {
   res.send({ message: 'This is a test page that you have accessed.'});
-	
-  //console.log();
+
   //res.send(getSigned);
   
   //res.render('pages/test');
   
 });
 
+// view logs publicly
+app.get('/logs', (req, res) => {
+
+  //res.send('reqLog.txt');
+  res.sendFile('reqLog.txt', { root: './views/logs' });
+
+});
+
 // create product route with image
 app.post('/create', upload.single('image'), createProduct, async (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
     const  { name, description, price, code, quantity } = req.body;
     
     console.log('req.body', req.body)
@@ -130,12 +150,13 @@ app.post('/create', upload.single('image'), createProduct, async (req, res) => {
 
     console.log(push);
 	    
-    res.redirect('/')
+    res.redirect('/dashboard')
     //res.send({ message: 'Success' });
 });
 
 // get products route
 app.get('/api/products', async (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t${req.method}`, './views/logs/reqLog.txt');
     const products = await getProducts()
 
     for (const product of products) {
@@ -158,7 +179,7 @@ app.get('/api/products', async (req, res) => {
 
 // get product by id
 app.get('/api/products/:id', async(req, res) => {
-    
+    myEmitter.emit('log', `${req.url}\t\t${req.method}`, './views/logs/reqLog.txt');
     const id = req.params.id
     const product = await getProduct(id)
     console.log(product)
@@ -180,6 +201,7 @@ app.get('/api/products/:id', async(req, res) => {
 // Authenticate with google
 app.get('/auth/google',
   passport.authenticate('google', { scope: ['email', 'profile'] })
+
 );
 
 app.get('/google/callback',
@@ -193,10 +215,12 @@ app.get('/auth/failure', (req, res) => {
 
 //Protected page unless authenticated
 app.get('/protected', isLoggedIn, (req, res) => {
-   res.send(`Hello ${req.user.displayName}`);
+   res.send(`Hello ${req.user.displayName}`)
+	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
 });
 
 app.get('/logout', function(req, res, next) {
+	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
    req.logout(function(err) {
      if (err) { return next(err); }
      req.session.destroy();
@@ -206,18 +230,20 @@ app.get('/logout', function(req, res, next) {
 
 // register route
  app.get('/register', (req, res) => {
+	 myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
      res.render('register', { message: req.flash('loginMessage') });
 });
 
 
 // Signup route
 app.get('/signup', (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
    res.render('pages/signup', { message: req.flash('signupMessage') });
 });
 
 app.post('/api/signup', (req, res) => {
 
- 
+ myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
   const { name, username, email, gender, idNumber, dateOfBirth, password, confirmPassword } = req.body;
 
 	console.log(req.body);
@@ -270,10 +296,12 @@ app.post('/api/signup', (req, res) => {
 
 // Login route
 app.get('/login', (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
     res.render('login', { message: req.flash('loginMessage') });
 });
 
 app.post('/login', (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
   const { username, password } = req.body;
 
     // Fetch user from the database based on username
@@ -308,11 +336,13 @@ app.post('/login', (req, res) => {
 
 // home route
 app.get('/home', (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
        res.render('pages/admin');
 });
 
 // dashboard route
 app.get('/dashboard', isLoggedIn, (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t${req.method}`, './views/logs/reqLog.txt');
 
 	if (!req.session) {
         // Redirect unauthenticated users to the login page
@@ -326,6 +356,7 @@ app.get('/dashboard', isLoggedIn, (req, res) => {
 
 // cart route
 app.get('/cart', isLoggedIn, (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
       // Check if the user is authenticated (e.g., by checking session or JWT)
       //         if (!req.isAuthenticated()) {
          if (!req.session) {
@@ -341,6 +372,7 @@ app.get('/cart', isLoggedIn, (req, res) => {
 
 // payment page
 app.get('/checkout', (request, response) => {
+	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
     response.render('payment', {
         key:PUBLISHABLE_KEY
     })
@@ -349,6 +381,7 @@ app.get('/checkout', (request, response) => {
 
 // payment route
 app.post('/payment', async (request, response) => {
+	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
     await stripe.customers.create({
         email:request.body.stripeEmail,
         source:request.body.stripeToken,
@@ -383,8 +416,7 @@ app.post('/payment', async (request, response) => {
 
 
 // Authenticate with Twitter
-app.get('/auth/twitter',
-  passport.authenticate('twitter'));
+app.get('/auth/twitter', passport.authenticate('twitter'));
 
 
 app.get('/twitter/callback', 
@@ -395,13 +427,6 @@ app.get('/twitter/callback',
   //// Successful authentication, redirect home.
   //   res.redirect('/protected');
 );
-
-
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-	  console.log(`Server up and running on port ${port}`);
-});
-
 
 //Authenticate via facebook
 app.get('/auth/facebook',
@@ -415,3 +440,8 @@ app.get('/facebook/callback',
 		      // Successful authentication, redirect home.
 		  //     res.redirect('/');
 );
+
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+          console.log(`Server up and running on port ${port}`);
+});

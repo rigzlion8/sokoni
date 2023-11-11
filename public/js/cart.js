@@ -64,7 +64,7 @@ let generateCartItems = () => {
           <div class="title-price-x">
             <h4 class="title-price">
               <p>${search.name}</p>
-              <p class="cart-item-price">$ ${price}</p>
+              <p class="cart-item-price">$ ${+price}</p>
             </h4>
             <i onclick="removeItem(${id})" class="bi bi-x-lg"></i>
           </div>
@@ -168,17 +168,26 @@ let removeItem = (id) => {
  */
 
 let TotalAmount = () => {
-  
   if (basket.length !== 0) {
     let amount = basket.map((x) => {
-        let { id, item } = x;
 	    
-        let filterData = basket.find((x) => x.id === id);
+        let { id, item } = x;
+	//let search = shopItemsData.find((x) => x.id === id) || [];
+        //let { imageUrl, price, name } = search;
+	    
+        let filterData = basket.find((x) => x.id === id) || [];
+
+	//let calc = search.price;
         
-	return filterData.price * item;
+        return filterData.price * item;
+	//return search.price * item;
+	//return calc * item;
 
       })
       .reduce((x, y) => x + y, 0);
+
+	  //console.log(amount);
+	  //console.log(+amount);
 	  
 
     return (label.innerHTML = `

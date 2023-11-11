@@ -17,6 +17,7 @@
     "aws-sdk": "^2.1463.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
+    "date-fns": "^2.30.0",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
@@ -33,6 +34,7 @@
     "passport-twitter": "^1.0.4",
     "sequelize": "^6.33.0",
     "sharp": "^0.32.6",
-    "stripe": "^13.9.0"
+    "stripe": "^13.9.0",
+    "uuid": "^9.0.1"
   }
 }
