@@ -378,10 +378,17 @@ app.get('/checkout', (request, response) => {
     })
 });
 
+// new payment page not sure if it's used
+app.get('/stripe-checkout', (request, response) => {
+        myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
+    response.render('payment', {
+        key:PUBLISHABLE_KEY
+    })
+});
 
 // payment route
 app.post('/payment', async (request, response) => {
-	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
+
     await stripe.customers.create({
         email:request.body.stripeEmail,
         source:request.body.stripeToken,
@@ -412,7 +419,42 @@ app.post('/payment', async (request, response) => {
     })
 });
 
+// new payment method stripe hosted page
+app.post('/stripe-checkout', async (req, res) => {
 
+	//let product = getSigned.find((x) => x.id === id) || [];
+  const lineItems = getSigned.map((product) => {
+
+	  let { imageUrl, price, name } = product;
+    //const unitAmount = parseInt(parseFloat(product.price) * 100)
+    console.log('product-price:', product.price);
+    //console.log('unitAmount:', unitAmount );
+    
+    return {
+      price_data: {
+          currency: 'usd',
+	  product_data: {
+              name: product.name, 
+	      images: [product.imageUrl],
+	  },
+	  unit_amount: product.price * 100, 
+
+      },
+      quantity: product.quantity,
+
+    };
+  });
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'], 
+    mode: 'payment', 
+    success_url: `https://sokoni.innovatenbo.tech/dashboard`, 
+    cancel_url: `https://sokoni.innovatenbo.tech/dashboard`,
+    billing_address_collection: 'required',
+    line_items: lineItems,
+  });
+  res.json({ url: session.url });
+
+});
 
 
 // Authenticate with Twitter

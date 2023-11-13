@@ -28,6 +28,43 @@ let getSignedProducts = async function() {
 getSignedProducts();
 
 /**
+ * ! Used to calculate total amount of the selected Products
+ * ! with specific quantity
+ * ? When basket is blank, it will show nothing
+ */
+
+let TotalAmount = () => {
+
+  if (basket.length !== 0) {
+    let amount = basket.map((x) => {
+
+        let { id, item } = x;
+        let search = shopItemsData.find((x) => x.id == id) || [];
+
+        let { imageUrl, price, name } = search;
+
+        //let filterData = basket.find((x) => x.id === id) || [];
+
+        //return filterData.price * item;
+        return +price * item;
+
+      })
+      .reduce((x, y) => { return x + y }, 0);
+
+    return (label.innerHTML = `
+<!--    <div style="justify-content: center; padding-left: 50%; padding-right: 50%;"> -->
+    <div style="justify-content: center; padding-left: 40%;"><h2>Total Bill : $ ${+amount}</h2>
+    <button onclick="href=/stripe-checkout" class="checkout" style="justify-content: center;">Checkout</button>
+    <button onclick="clearCart()" class="removeAll" style="justify-content: center;">Clear Cart</button>
+    </div>
+    `);
+  } else return;
+        const bill = amount;
+};
+TotalAmount();
+
+
+/**
  * ! To calculate total amount of selected Items
  */
 
@@ -89,6 +126,7 @@ let generateCartItems = () => {
     </a>
     `;
   }
+TotalAmount();
 };
 
 generateCartItems();
@@ -157,47 +195,32 @@ let removeItem = (id) => {
   localStorage.setItem("data", JSON.stringify(basket));
 };
 
-/**
- * ! Used to calculate total amount of the selected Products
- * ! with specific quantity
- * ? When basket is blank, it will show nothing
- */
 
-let TotalAmount = () => {
-  if (basket.length !== 0) {
-    let amount = basket.map((x) => {
-	    
-        let { id, item } = x;
-	//let search = shopItemsData.find((x) => x.id === id) || [];
-        //let { imageUrl, price, name } = search;
-	    
-        let filterData = basket.find((x) => x.id === id) || [];
+const checkout = document.querySelector('.checkout');
 
-	//let calc = search.price;
+checkout.addEventListener('click', () => {
+    fetch('/stripe-checkout', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            items: JSON.parse(localStorage.getItem("data"))
+        }),
+    })
+    .then((res) => res.json())
+    .then((data) => {
+        if (data.url) {
+            window.location.href = data.url
+        } else {
+            console.log("Invalid URL received from the server:", data.url)
+	}
         
-        return filterData.price * item;
-	//return search.price * item;
-	//return calc * item;
+    })
+    .catch((err) => console.error(err));
+})
 
-      })
-      .reduce((x, y) => x + y, 0);
 
-	  //console.log(amount);
-	  //console.log(+amount);
-	  
-
-    return (label.innerHTML = `
-<!--    <div style="justify-content: center; padding-left: 50%; padding-right: 50%;"> -->
-    <div style="justify-content: center; padding-left: 40%;"><h2>Total Bill : $ ${amount}</h2>
-    <button onclick="href=/checkout" class="checkout" style="justify-content: center;">Checkout</button>
-    <button onclick="clearCart()" class="removeAll" style="justify-content: center;">Clear Cart</button>
-    </div>
-    `);
-  } else return;
-	const bill = amount;
-};
-
-TotalAmount();
 
 /**
  * ! Used to clear cart, and remove everything from local storage
@@ -209,3 +232,4 @@ let clearCart = () => {
   calculation();
   localStorage.setItem("data", JSON.stringify(basket));
 };
+
