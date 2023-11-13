@@ -20,16 +20,12 @@ let getSignedProducts = async function() {
       const shopData = await response.json();
       shopItemsData = shopData;
       
-      
       generateCartItems();
     } catch (error) {
       console.error(error);
   }
 };
 getSignedProducts();
-
-
-
 
 /**
  * ! To calculate total amount of selected Items
