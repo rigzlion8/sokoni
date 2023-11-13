@@ -49,14 +49,15 @@
  </div>
 </nav>
 
-  <div id="label"></div>
+  <div class="label" id="label"></div>
+
   <div class="stripe-button" style="justify-content: center;">
   <form action="payment" method="POST">
       <script
        src='//checkout.stripe.com/v2/checkout.js'
        class='stripe-button'
        style = "justify-content: center;"
-       data-key='pk_test_51NyG3KGpflEAVJInnBpBaQpbCOn9IMbPkKrMM2WyY5TcIIbkFd4HiG2RfvKlcirx5pxIG25Zwy8yMHMsnBfel9qC00af4eHHqa'
+       data-key='<%= process.env.PUBLISHABLE_KEY %>'
        data-amount='<700'
        data-currency='usd'
        data-name='Rigz Lion'
@@ -69,6 +70,7 @@
 
   <div class="shopping-cart" id="shopping-cart"></div>
 </body>
+
 <script src="/js/cart.js"></script>
 <footer class="footer mt-5 p-5">
   <div class="text-center">
