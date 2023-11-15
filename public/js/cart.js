@@ -39,14 +39,14 @@ let TotalAmount = () => {
     let amount = basket.map((x) => {
 
         let { id, item } = x;
-        let search = shopItemsData.find((x) => x.id == id) || [];
+        let { price } = shopItemsData.find((x) => x.id == id) || [];
 
-        let { imageUrl, price, name } = search;
+        //let { imageUrl, price, name } = search;
 
         //let filterData = basket.find((x) => x.id === id) || [];
 
         //return filterData.price * item;
-        return +price * item;
+        return item * +price;
 
       })
       .reduce((x, y) => { return x + y }, 0);
@@ -82,6 +82,8 @@ calculation();
  */
 
 let generateCartItems = () => {
+
+   TotalAmount();
   if (basket.length !== 0) {
     return (ShoppingCart.innerHTML = basket
       .map((x) => {
@@ -129,7 +131,6 @@ let generateCartItems = () => {
 TotalAmount();
 };
 
-generateCartItems();
 
 /**
  * ! used to increase the selected product item quantity by 1
