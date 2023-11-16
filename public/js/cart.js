@@ -27,6 +27,7 @@ let getSignedProducts = async function() {
 };
 getSignedProducts();
 
+
 /**
  * ! Used to calculate total amount of the selected Products
  * ! with specific quantity
@@ -46,16 +47,18 @@ let TotalAmount = () => {
         //let filterData = basket.find((x) => x.id === id) || [];
 
         //return filterData.price * item;
-        return item * +price;
+        return item * price;
 
       })
       .reduce((x, y) => { return x + y }, 0);
 
     return (label.innerHTML = `
-<!--    <div style="justify-content: center; padding-left: 50%; padding-right: 50%;"> -->
-    <div style="justify-content: center; padding-left: 40%;"><h2>Total Bill : $ ${+amount}</h2>
-    <button onclick="href=/stripe-checkout" class="checkout" style="justify-content: center;">Checkout</button>
+    <div class="bill"><h2>Total Bill : $ ${amount}</h2>
+    <form action="/stripe-checkout" method="POST">
+    <button class="checkout" type="submit">Checkout</button>
     <button onclick="clearCart()" class="removeAll" style="justify-content: center;">Clear Cart</button>
+    </form>
+    <!-- <button onclick="clearCart()" class="removeAll" style="justify-content: center;">Clear Cart</button> -->
     </div>
     `);
   } else return;
@@ -63,6 +66,25 @@ let TotalAmount = () => {
 };
 TotalAmount();
 
+
+
+// stripe payment
+const checkout = document.querySelector(".checkout");
+
+checkout.addEventListener("click", () => {
+    fetch("/stripe-checkout", {
+        method: "POST",
+        headers: new Headers({"Content-Type": "application/json"}),
+        body: JSON.stringify({
+            items: JSON.parse(localStorage.getItem("data")),
+        }),
+    })
+    .then((res) => res.json())
+    .then((url) => {
+        location.href = url;
+    })
+    .catch((err) => console.log(err));
+});
 
 /**
  * ! To calculate total amount of selected Items
@@ -128,7 +150,6 @@ let generateCartItems = () => {
     </a>
     `;
   }
-TotalAmount();
 };
 
 
@@ -195,32 +216,6 @@ let removeItem = (id) => {
   TotalAmount();
   localStorage.setItem("data", JSON.stringify(basket));
 };
-
-
-const checkout = document.querySelector('.checkout');
-
-checkout.addEventListener('click', () => {
-    fetch('/stripe-checkout', {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            items: JSON.parse(localStorage.getItem("data"))
-        }),
-    })
-    .then((res) => res.json())
-    .then((data) => {
-        if (data.url) {
-            window.location.href = data.url
-        } else {
-            console.log("Invalid URL received from the server:", data.url)
-	}
-        
-    })
-    .catch((err) => console.error(err));
-})
-
 
 
 /**

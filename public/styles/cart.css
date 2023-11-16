@@ -145,15 +145,29 @@ a {
 * ! style rules for label and some buttons
 **/
 
+
+.label {
+  margin-top: 30px;
+  padding-top: 20px;
+}
+
+.bill {
+  justify-content: center;
+}
+
 .text-center {
   text-align: center;
   margin-bottom: 20px;
 }
 
 .stripe-button {
-  justify-content: center;
+  justify-content: center !important;
   padding-bottom: 20px;
   text-align: center;
+  padding: 8px 30px !important;
+  margin: 30px 0 !important;
+  border-radius: 5px !important;
+  transition: background 0.5s !important;
 
 }
 
@@ -204,6 +218,8 @@ a {
   border-radius: 5px;
   display: flex;
 }
+
+
 
 .title-price-x {
   width: 195px;

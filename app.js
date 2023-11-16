@@ -19,7 +19,7 @@ class MyEmitter extends EventEmitter {};
 const myEmitter = new MyEmitter();
 myEmitter.on('log', (msg, fileName) => logEvents(msg, fileName))
 
-import Stripe from 'stripe'
+//import Stripe from 'stripe'
 
 import { createOauthUser, getOauthUser, getOauthUsers, con } from './config.js'
 
@@ -67,10 +67,11 @@ const TWITTER_CONSUMER_SECRET = process.env.TWITTER_CONSUMER_SECRET;
 const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 
-const stripe = new Stripe(SECRET_KEY);
-
-
 const app = express();
+
+import Stripe from 'stripe'
+
+const stripe = new Stripe(SECRET_KEY);
 
 import { db } from './db.js'
 
@@ -297,7 +298,7 @@ app.post('/api/signup', (req, res) => {
 // Login route
 app.get('/login', (req, res) => {
 	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
-    res.render('login', { message: req.flash('loginMessage') });
+    res.render('pages/login', { message: req.flash('loginMessage') });
 });
 
 app.post('/login', (req, res) => {
@@ -378,13 +379,6 @@ app.get('/checkout', (request, response) => {
     })
 });
 
-// new payment page not sure if it's used
-app.get('/stripe-checkout', (request, response) => {
-        myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
-    response.render('payment', {
-        key:PUBLISHABLE_KEY
-    })
-});
 
 // payment route
 app.post('/payment', async (request, response) => {
@@ -419,15 +413,18 @@ app.post('/payment', async (request, response) => {
     })
 });
 
+
 // new payment method stripe hosted page
+
+let DOMAIN = process.env.DOMAIN;
+
 app.post('/stripe-checkout', async (req, res) => {
 
-	//let product = getSigned.find((x) => x.id === id) || [];
   const lineItems = getSigned.map((product) => {
 
 	  let { imageUrl, price, name } = product;
-    //const unitAmount = parseInt(parseFloat(product.price) * 100)
-    console.log('product-price:', product.price);
+    const unitAmount = parseInt(product.price.replace(/[^0-9.-]+/g, "") * 100);
+    //console.log('product-price:', product.price);
     //console.log('unitAmount:', unitAmount );
     
     return {
@@ -437,22 +434,25 @@ app.post('/stripe-checkout', async (req, res) => {
               name: product.name, 
 	      images: [product.imageUrl],
 	  },
-	  unit_amount: product.price * 100, 
+	  //unit_amount: product.price * 100, 
+	  unit_amount: unitAmount, 
 
       },
       quantity: product.quantity,
 
     };
   });
+	//console.log('lineItems', lineItems);
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'], 
-    mode: 'payment', 
-    success_url: `https://sokoni.innovatenbo.tech/dashboard`, 
-    cancel_url: `https://sokoni.innovatenbo.tech/dashboard`,
-    billing_address_collection: 'required',
-    line_items: lineItems,
+    payment_method_types: ["card"], 
+    mode: "payment", 
+    success_url: `${DOMAIN}/dashboard`, 
+    cancel_url: `${DOMAIN}/dashboard`, 
+    line_items: lineItems, 
+    billing_address_collection: "required",
   });
-  res.json({ url: session.url });
+  //res.json({ url: session.url });
+  res.redirect(303, session.url);
 
 });
 
