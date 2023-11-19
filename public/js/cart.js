@@ -11,6 +11,18 @@ let shopItemsData = [];
 
 let basket = JSON.parse(localStorage.getItem("data")) || [];
 
+if (basket.length == []) {
+  ShoppingCart.innerHTML = "";
+    label.innerHTML = `
+    <div class="btnempty"><h2>Your cart is empty</h2></div>
+    <div class="btnhome"><a href="/dashboard">
+      <button class="HomeBtn">Back to Home</button>
+    </a></div>
+    `;
+}
+
+
+
 let getSignedProducts = async function() {
   try {
       const response = await fetch('/api/products');
@@ -53,10 +65,11 @@ let TotalAmount = () => {
       .reduce((x, y) => { return x + y }, 0);
 
     return (label.innerHTML = `
-    <div class="bill"><h2>Total Bill : $ ${amount}</h2>
-    <form action="/stripe-checkout" method="POST">
-    <button class="checkout" type="submit">Checkout</button>
-    <button onclick="clearCart()" class="removeAll" style="justify-content: center;">Clear Cart</button>
+    <div class="bill"><h2>Total Bill : $ ${amount}</h2></div>
+    <div class-"check">
+    <form class="stc" action="/stripe-checkout" method="POST">
+    <div class="btncart"><button class="checkout" type="submit">Checkout</button></div>
+    <div class="btncart"><button onclick="clearCart()" class="removeAll" style="justify-content: center;">Clear Cart</button></div>
     </form>
     <!-- <button onclick="clearCart()" class="removeAll" style="justify-content: center;">Clear Cart</button> -->
     </div>
@@ -105,8 +118,9 @@ calculation();
 
 let generateCartItems = () => {
 
-   TotalAmount();
+   //TotalAmount();
   if (basket.length !== 0) {
+	  TotalAmount();
     return (ShoppingCart.innerHTML = basket
       .map((x) => {
         let { id, item } = x;
@@ -142,12 +156,13 @@ let generateCartItems = () => {
       })
       .join(""));
   } else {
+    //basket.length == [];
     ShoppingCart.innerHTML = "";
     label.innerHTML = `
-    <h2>Cart is Empty</h2>
-    <a href="/dashboard">
+    <div class="btnempty"><h2>Your cart is empty</h2></div>
+    <div class="btnhome"><a href="/dashboard">
       <button class="HomeBtn">Back to Home</button>
-    </a>
+    </a></div>
     `;
   }
 };

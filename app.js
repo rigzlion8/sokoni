@@ -19,7 +19,40 @@ class MyEmitter extends EventEmitter {};
 const myEmitter = new MyEmitter();
 myEmitter.on('log', (msg, fileName) => logEvents(msg, fileName))
 
-//import Stripe from 'stripe'
+// google maps geocoder
+import NodeGeocoder from 'node-geocoder'
+
+const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+
+const options = {
+  
+    provider: 'google', 
+    apiKey
+};
+
+const geocoder = NodeGeocoder(options); 
+
+// Instantiate google maps client
+import { Client } from "@googlemaps/google-maps-services-js";
+
+const client = new Client({});
+
+client
+  .elevation({
+    params: {
+      locations: [{ lat: 45, lng: -110 }],
+      key: apiKey,
+    },
+    timeout: 1000, // milliseconds
+  })
+  .then((r) => {
+    console.log(r.data.results[0].elevation);
+  })
+  .catch((e) => {
+    console.log(e.response.data.error_message);
+});
+
+
 
 import { createOauthUser, getOauthUser, getOauthUsers, con } from './config.js'
 
@@ -54,6 +87,8 @@ const s3 = new S3Client({
 upload.single('image')
 
 export var getSigned;
+
+export var getUserId;
 
 //const { getUser, getUsers, createUser } = require('./db');
 import { getProduct, getProducts, createProduct } from './public/js/product.js'
@@ -113,6 +148,21 @@ app.get('/test', (req, res) => {
   
 });
 
+app.get('/maps', (req, res) => {
+  myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
+  res.render('pages/maps', { apiKey: apiKey });
+});
+
+app.get('/privacy', (req, res) => {
+  res.send({ message: 'This will be the privacy page...coming soon.' });
+
+});
+
+app.get('/t&cs', (req, res) => {
+  res.send({ message: 'This will be the terms & conditions page...coming soon.' });
+
+});
+
 // view logs publicly
 app.get('/logs', (req, res) => {
 
@@ -126,8 +176,8 @@ app.post('/create', upload.single('image'), createProduct, async (req, res) => {
 	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
     const  { name, description, price, code, quantity } = req.body;
     
-    console.log('req.body', req.body)
-    console.log('req.file', req.file)
+    //console.log('req.body', req.body)
+    //console.log('req.file', req.file)
     
     //resize image using sharp
     const buffer = await sharp(req.file.buffer).resize({height: 600, width: 600, fit: 'contain' }).toBuffer()
@@ -325,6 +375,8 @@ app.post('/login', (req, res) => {
            if (isMatch) {
              // Authentication successful
              req.session.user = user;
+	     getUserId = user.id;
+		   console.log(getUserId);
              res.redirect('/dashboard'); // Redirect to the dashboard or another secure page
            } else {
              req.flash('loginMessage', 'Incorrect password');
@@ -422,40 +474,39 @@ app.post('/stripe-checkout', async (req, res) => {
 
   const lineItems = getSigned.map((product) => {
 
-	  let { imageUrl, price, name } = product;
+          let { imageUrl, price, name } = product;
     const unitAmount = parseInt(product.price.replace(/[^0-9.-]+/g, "") * 100);
     //console.log('product-price:', product.price);
     //console.log('unitAmount:', unitAmount );
-    
+
     return {
       price_data: {
           currency: 'usd',
-	  product_data: {
-              name: product.name, 
-	      images: [product.imageUrl],
-	  },
-	  //unit_amount: product.price * 100, 
-	  unit_amount: unitAmount, 
+          product_data: {
+              name: product.name,
+              images: [product.imageUrl],
+          },
+          //unit_amount: product.price * 100,
+          unit_amount: unitAmount,
 
       },
       quantity: product.quantity,
 
     };
   });
-	//console.log('lineItems', lineItems);
+        //console.log('lineItems', lineItems);
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"], 
-    mode: "payment", 
-    success_url: `${DOMAIN}/dashboard`, 
-    cancel_url: `${DOMAIN}/dashboard`, 
-    line_items: lineItems, 
+    payment_method_types: ["card"],
+    mode: "payment",
+    success_url: `${DOMAIN}/dashboard`,
+    cancel_url: `${DOMAIN}/dashboard`,
+    line_items: lineItems,
     billing_address_collection: "required",
   });
   //res.json({ url: session.url });
   res.redirect(303, session.url);
 
 });
-
 
 // Authenticate with Twitter
 app.get('/auth/twitter', passport.authenticate('twitter'));
