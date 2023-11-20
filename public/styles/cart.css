@@ -232,7 +232,8 @@ form {
   border-radius: 10px;
   display: flex;
   /*width: 440px;*/
-  margin: 20px 20px 0 20px;
+  /*margin: 20px 20px 0 20px;*/
+  margin: 20px;
 
 }
 

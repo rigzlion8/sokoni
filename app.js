@@ -490,7 +490,7 @@ app.post('/stripe-checkout', async (req, res) => {
           unit_amount: unitAmount,
 
       },
-      quantity: product.quantity,
+      quantity: 1,
 
     };
   });
