@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../config');
 
+// no longer used
 const User = sequelize.define('User', { 
   oAuthUserId: { 
     type: Sequelize.STRING,

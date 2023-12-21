@@ -7,6 +7,7 @@ console.log('DBNAME:', process.env.DBNAME);
 console.log('USERNAME:', process.env.USERNAME);
 console.log('HOST:', process.env.HOST);
 
+// create connection to db
 export const con = mysql.createPool({
     host: process.env.HOST,
     user: process.env.USERNAME, 

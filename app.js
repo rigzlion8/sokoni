@@ -12,6 +12,8 @@ import fs from 'fs'
 import { promises as fsPromises } from 'fs'
 import { logEvents } from './logEvents.js'
 import EventEmitter from 'events'
+import moment from 'moment';
+import request from 'request';
 
 // setup event emitter
 class MyEmitter extends EventEmitter {};
@@ -102,6 +104,10 @@ const TWITTER_CONSUMER_SECRET = process.env.TWITTER_CONSUMER_SECRET;
 const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 
+const CONSUMER_KEY = process.env.CONSUMER_KEY;
+const CONSUMER_SECRET = process.env.CONSUMER_SECRET;
+const PASSKEY = process.env.PASSKEY;
+
 const app = express();
 
 import Stripe from 'stripe'
@@ -148,6 +154,100 @@ app.get('/test', (req, res) => {
   
 });
 
+// Mpesa access_token
+app.get('/access_token', (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t${req.method}`, './views/logs/reqLog.txt');
+
+  getAccessToken()
+  .then((accessToken) => {
+    res.send('Your access token is ' + accessToken);
+  })
+  .catch(console.log);
+});
+
+// Mpesa get access token function
+const getAccessToken = () => {
+  let url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+  let auth = 'Basic ' + new Buffer.from(CONSUMER_KEY + ':' + CONSUMER_SECRET).toString('base64');
+
+  
+  return new Promise((response, reject) => {
+    request(
+      {
+        url,
+        headers: {
+        Authorization: auth,
+      },
+    },
+    function (error, res, body) {
+      var jsonBody = JSON.parse(body);
+      if (error) {
+        reject(error);
+      } else {
+        const accessToken = jsonBody.access_token;
+        response(accessToken);
+      }
+    }
+    
+  );
+});
+}
+
+// Mpesa STK Push route
+app.get('/stkpush', (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t${req.method}`, './views/logs/reqLog.txt');
+
+  getAccessToken()
+  .then((accessToken) => {
+    const url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', 
+    auth = 'Bearer ' + accessToken;
+    var timestamp = moment().format('YYYYMMDDHHmmss');
+    const password = new Buffer.from('174379' + PASSKEY + timestamp).toString('base64');
+
+    request(
+      {
+        url, 
+        method: 'POST', 
+        headers: {          
+          Authorization: auth,
+        },
+        json: {          
+          BusinessShortCode: '174379', 
+          Password: password, 
+          Timestamp: timestamp, 
+          TransactionType: 'CustomerPayBillOnline', 
+          Amount: '1', 
+          PartyA: '254708374149', 
+          PartyB: '174379', 
+          PhoneNumber: '254740389555', 
+          CallBackURL: 'https://sokoni.innovatenbo.tech/safaricom/callback', 
+          AccountReference: 'Sokoni Pay', 
+          TransactionDesc: 'Sokoni STK test',
+        },
+      },
+      function (error, response, body) {
+        if (error) {
+          console.log(error)
+        } else {
+          'Sokoni payment initialized. Please enter MPESA PIN to complete...'
+        };
+        res.status(200).json(body);
+      }
+    );
+  })
+  .catch(console.log);
+});
+
+// Mpesa saf callback url
+app.get('/safaricom/callback', (req, res) => {
+	myEmitter.emit('log', `${req.url}\t\t${req.method}`, './views/logs/reqLog.txt');
+  //res.send({ message: 'If you reached here...Mpesa STK push worked!!!'});
+  const response = res.json({});
+  console.log(response);
+});
+
+app.get('/videos', (req, res) => res.render('pages/video'));
+
 app.get('/maps', (req, res) => {
   myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
   res.render('pages/maps', { apiKey: apiKey });
@@ -171,7 +271,7 @@ app.get('/logs', (req, res) => {
 
 });
 
-// create product route with image
+// create product route with image upload to amazon s3
 app.post('/create', upload.single('image'), createProduct, async (req, res) => {
 	myEmitter.emit('log', `${req.url}\t\t\t${req.method}`, './views/logs/reqLog.txt');
     const  { name, description, price, code, quantity } = req.body;

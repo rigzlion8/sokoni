@@ -70,6 +70,11 @@ a {
   border-radius: 3px;
 }
 
+
+h3 {
+  margin: 0;
+  padding: 0;
+ }
 /**
 * ! Shop items styles are here
 **/
@@ -87,6 +92,20 @@ a {
   }
 }
 
+@media (max-width: 500px) {
+  .cart-item {
+    width: 400px;
+    grid-template-columns: repeat(1, 223px);
+  }
+}
+
+
+@media (max-width: 500px) {
+  .label {
+    flex-direction: column;
+    grid-template-columns: repeat(1, 223px);
+  }
+}
 
 .item:hover { 
   transform: translateY(-7px);
@@ -100,8 +119,8 @@ a {
   gap: 10px;
   /*background-color: coral;
   border-radius: 0 6px 6px 0;*/
-  height: 250px;
-  width: 260px;
+  height: 150px;
+  width: 600px;
 }
 
 .price-quantity {
@@ -135,10 +154,17 @@ a {
   padding-right: 10px;
 }
 .label {
-  border: 1px solid #212529;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  /*border: 1px solid #212529;*/
   border-radius: 10px;
+  width: 600px;
   margin: 30px 30px;
   padding: 20px 20px;
+  right: 50px;
+  top: 100px;
+  flex-direction: row;
+  position: absolute;
+
 }
 
 .bill {
@@ -211,6 +237,7 @@ form {
 **/
 
 .shopping-cart {
+  width: 750px;
   padding-top: 20px;
   padding-left: 20px;
   cursor: pointer;
@@ -231,20 +258,22 @@ form {
   border-style: outset;
   border-radius: 10px;
   display: flex;
-  /*width: 440px;*/
+  height: 150px;
+  width: 80%;
+  /*width: 640px;*/
   /*margin: 20px 20px 0 20px;*/
   margin: 20px;
 
 }
 
 .cart-item img {
-  width: 50%;
-  /*height: 90%;
+  width: 150px;
+  height: 150px;
   border-radius: 8px 0 0 8px;*/
 }
 
 .title-price-x {
-  width: 195px;
+  width: 450px;
   display: flex;
   align-items: center;
   justify-content: space-between;

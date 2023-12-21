@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 import  { con, createOauthUser, createOauthTwitter, createOauthFb, getOauthUser, getOauthUsers } from './config.js'
 
-// Google authentication
+// Google oauth 2.0 authentication
 passport.use(new GoogleStrategy({
 	    clientID: process.env.GOOGLE_CLIENT_ID,
 	    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -38,7 +38,7 @@ passport.deserializeUser(function(obj, cb) {
   cb(null, obj);
 });
 
-// Twitter authentication
+// Twitter oauth 2.0 authentication
 passport.use(new TwitterStrategy({
 	    consumerKey:process.env.TWITTER_CONSUMER_KEY,
 	    consumerSecret:process.env.TWITTER_CONSUMER_SECRET,
@@ -69,7 +69,7 @@ passport.deserializeUser(function(user, cb) {
 	            cb(null , obj);  // _id is the only thing we need to store in session for now
 })
 
-//Facebook authentication
+// Facebook oauth 2.0 authentication
 passport.use(new FacebookStrategy({
 	    clientID: process.env.FACEBOOK_APP_ID,
 	    clientSecret: process.env.FACEBOOK_APP_SECRET,
